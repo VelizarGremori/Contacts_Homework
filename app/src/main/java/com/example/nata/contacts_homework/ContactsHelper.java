@@ -24,13 +24,23 @@ public class ContactsHelper {
 
     long insert(String name, String phone) {
 
-        ContentValues cv = new ContentValues();// хранилище с принципом ключ-значени
+        ContentValues cv = new ContentValues();
 
         cv.put(DBHelper.COLUMN_NAME, name);
         cv.put(DBHelper.COLUMN_PHONE, phone);
 
-        return db.insert(TABLE_NAME, null, cv);// метод insert возвращает id, помещенного объекта в таблицу.
-        // указали имя таблицы и хранилище данных
+        return db.insert(TABLE_NAME, null, cv);
+    }
+
+    long update(long id, String name, String phone){
+
+        ContentValues cv = new ContentValues();
+
+        cv.put(DBHelper.COLUMN_NAME, name);
+        cv.put(DBHelper.COLUMN_PHONE, phone);
+
+        return db.update(TABLE_NAME, cv, "_id = ?",new String[]{Long.toString(id)});
+
     }
 
     ArrayList<Contact> getAll() {
@@ -42,19 +52,17 @@ public class ContactsHelper {
 
         if (!mCursor.isAfterLast()) {
 
-            //делай пока записи есть в таблице
             do {
                 long id = mCursor.getLong(DBHelper.NUM_COLUMN_ID);
                 String name = mCursor.getString(DBHelper.NUM_COLUMN_NAME);
                 String phone = mCursor.getString(DBHelper.NUM_COLUMN_PHONE);
 
-                // получем значения соотвествующих полей и формируем объект, добавив его в коллекцию.
                 arr.add(new Contact(id, name, phone));
 
             } while (mCursor.moveToNext());
         }
-        db.close(); // закрыли транзакцию
+        db.close();
 
-        return arr; // вернули коллекцию
+        return arr;
     }
 }
